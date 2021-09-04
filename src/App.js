@@ -1,19 +1,23 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
+import { ThemeContext } from './context/ThemeContext'
 import { Header } from './components/Header'
 import { Characters } from './components/Characters'
+
 import './App.css'
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false)
+  //To consume the state of our context we need to use useContext and access to the values within the ThemeContext
+  // In others components we access to the state using useContext instead passing props for each component
+  const { theme, setTheme } = useContext(ThemeContext)
 
 	const handleClick = () => {
-		setDarkMode(!darkMode)
+		setTheme(!theme)
 	}
 
   return (
-    <div className={darkMode ? 'bg-black' : 'bg-light'}>
-      <Header darkMode={darkMode} handleClick={handleClick} />
-      <Characters darkMode={darkMode} />
+    <div className={theme ? 'bg-black' : 'bg-light'}>
+      <Header handleClick={handleClick} />
+      <Characters />
       <h1>Hola mundo</h1>
     </div>
   );

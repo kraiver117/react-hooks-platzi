@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Characters.css'
 
-export const Characters = ({darkMode}) => {
+export const Characters = () => {
+	const { theme } = useContext(ThemeContext)
 
     const [characters, setCharacters] = useState([]);
 
@@ -14,9 +16,9 @@ export const Characters = ({darkMode}) => {
     return (
         <div className="characters mt-1">
 			{characters.map(character => (
-				<div className='mb-1'>
+				<div className='mb-1' key={character.id}>
 					<img src={character.image} alt={character.name} />
-					<h2 className={'text-center ' + (darkMode ? 'text-white' : 'text-dark')}>{character.name}</h2>
+					<h2 className={'text-center ' + (theme ? 'text-white' : 'text-dark')}>{character.name}</h2>
 				</div>
 			))}
         </div>

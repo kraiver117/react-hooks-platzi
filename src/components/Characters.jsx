@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useReducer, useMemo } from 'react'
+import React, { useState, useEffect, useContext, useReducer, useMemo, useRef } from 'react'
 import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Characters.css'
 
@@ -39,14 +39,18 @@ export const Characters = () => {
 
 	const [search, setSearch] = useState('')
 
+	//useRef refers an element in the DOM that allows to use all its properties
+	const SearchInput = useRef(null)
+
     useEffect(() => {
         fetch('https://rickandmortyapi.com/api/character/')
 			.then(response => response.json())
 			.then(data => setCharacters(data.results))
     }, [])
 
-	const handleSearch = (e) => {
-		setSearch(e.target.value)
+	const handleSearch = () => {
+		//Use ref of the Dom element instead of use e.target.value
+		setSearch(SearchInput.current.value)
 	}
 
 	// const filteredCharacters = characters.filter((character) => {
@@ -75,7 +79,7 @@ export const Characters = () => {
         <div className="characters mt-1">
 			{/* Search */}
 			<div className="Search">
-				<input type="text" value={search} onChange={handleSearch} />
+				<input type="text" value={search} ref={SearchInput} onChange={handleSearch} />
 			</div>
 
 			{/* We can access to the state provide to our useReducer */}

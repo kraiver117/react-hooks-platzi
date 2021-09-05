@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useReducer } from 'react'
+import React, { useState, useEffect, useContext, useReducer, useMemo } from 'react'
 import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Characters.css'
 
@@ -37,11 +37,30 @@ export const Characters = () => {
 
     const [characters, setCharacters] = useState([])
 
+	const [search, setSearch] = useState('')
+
     useEffect(() => {
         fetch('https://rickandmortyapi.com/api/character/')
 			.then(response => response.json())
 			.then(data => setCharacters(data.results))
     }, [])
+
+	const handleSearch = (e) => {
+		setSearch(e.target.value)
+	}
+
+	// const filteredCharacters = characters.filter((character) => {
+	// 	console.log('Without useMemo')
+	// 	return character.name.toLowerCase().includes(search.toLocaleLowerCase())
+	// })
+
+	//useMemo only re-calculate again if the array of dependencies changes
+	//This is great to avoid expensive calculations in every render
+	//NOTE: Do not use memo on API calls and if you work with dates and times on javascript
+	const filteredCharacters = useMemo(() => {
+		console.log('use Memo');
+		return characters.filter((character) => character.name.toLowerCase().includes(search.toLowerCase()))
+	}, [characters, search])
 
 	const handleClick = (favorite) => {
 		//A dispatch accept and object with type and payload to handle the action type in our reducer
@@ -54,6 +73,11 @@ export const Characters = () => {
 
     return (
         <div className="characters mt-1">
+			{/* Search */}
+			<div className="Search">
+				<input type="text" value={search} onChange={handleSearch} />
+			</div>
+
 			{/* We can access to the state provide to our useReducer */}
 			{state.favorites.length > 0 && <h2>Favoritos</h2>}
 			{state.favorites.map(character => (
@@ -65,7 +89,7 @@ export const Characters = () => {
 					</button>
 				</div>
 			))}
-			{characters.map(character => (
+			{filteredCharacters?.map(character => (
 				<div className='mb-1' key={character.id}>
 					<img src={character.image} alt={character.name} />
 					<h2 className={'text-center ' + (theme ? 'text-white' : 'text-dark')}>{character.name}</h2>

@@ -1,15 +1,18 @@
 import React, { 
 	useState, 
-	useEffect, 
 	useContext, 
 	useReducer, 
 	useMemo, 
 	useRef,
 	useCallback 
 } from 'react'
+import useCharacters from '../hooks/useCharacters';
 import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Characters.css'
 import { Search } from './Search';
+
+//API
+const API = 'https://rickandmortyapi.com/api/character/'
 
 //Create initial state of our reducer
 const initialState = {
@@ -44,18 +47,13 @@ export const Characters = () => {
 	//use Reducer accept in the first parameter a reducer and in the second the initial state
 	const [state, dispatch] = useReducer(favoriteReducer, initialState)
 
-    const [characters, setCharacters] = useState([])
-
 	const [search, setSearch] = useState('')
 
 	//useRef refers an element in the DOM that allows to use all its properties
 	const searchInput = useRef(null)
 
-    useEffect(() => {
-        fetch('https://rickandmortyapi.com/api/character/')
-			.then(response => response.json())
-			.then(data => setCharacters(data.results))
-    }, [])
+	//---Calling custom hook---//
+	const characters = useCharacters(API);
 
 	// const handleSearch = () => {
 	// 	//Use ref of the Dom element instead of use e.target.value

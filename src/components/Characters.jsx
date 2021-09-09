@@ -1,6 +1,15 @@
-import React, { useState, useEffect, useContext, useReducer, useMemo, useRef } from 'react'
+import React, { 
+	useState, 
+	useEffect, 
+	useContext, 
+	useReducer, 
+	useMemo, 
+	useRef,
+	useCallback 
+} from 'react'
 import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Characters.css'
+import { Search } from './Search';
 
 //Create initial state of our reducer
 const initialState = {
@@ -40,7 +49,7 @@ export const Characters = () => {
 	const [search, setSearch] = useState('')
 
 	//useRef refers an element in the DOM that allows to use all its properties
-	const SearchInput = useRef(null)
+	const searchInput = useRef(null)
 
     useEffect(() => {
         fetch('https://rickandmortyapi.com/api/character/')
@@ -48,10 +57,17 @@ export const Characters = () => {
 			.then(data => setCharacters(data.results))
     }, [])
 
-	const handleSearch = () => {
-		//Use ref of the Dom element instead of use e.target.value
-		setSearch(SearchInput.current.value)
-	}
+	// const handleSearch = () => {
+	// 	//Use ref of the Dom element instead of use e.target.value
+	// 	setSearch(searchInput.current.value)
+	// }
+
+	//USING USECALLBACK HOOK
+	//useCallback only generates one reference of the functions and avoid to build again the reference in every render
+	const handleSearch = useCallback(() => {
+		console.log('useCallback')
+		setSearch(searchInput.current.value)
+	},[])
 
 	// const filteredCharacters = characters.filter((character) => {
 	// 	console.log('Without useMemo')
@@ -78,9 +94,7 @@ export const Characters = () => {
     return (
         <div className="characters mt-1">
 			{/* Search */}
-			<div className="Search">
-				<input type="text" value={search} ref={SearchInput} onChange={handleSearch} />
-			</div>
+			<Search search={search} searchInput={searchInput} handleSearch={handleSearch} />
 
 			{/* We can access to the state provide to our useReducer */}
 			{state.favorites.length > 0 && <h2>Favoritos</h2>}
